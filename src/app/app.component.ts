@@ -25,6 +25,7 @@ export class AppComponent implements OnInit, OnDestroy {
   public obs: Observable<number>;
   public obsAccum: Observable<number>;
   public obsArr: Observable<any>;
+  public obsMap: Observable<any>;
   public arr: any;
   constructor(private http: Http) {}
 
@@ -35,13 +36,24 @@ export class AppComponent implements OnInit, OnDestroy {
     this.obs = this.subj.asObservable();
     this.obsAccum = this.subj2.asObservable();
     this.obsArr = this.subj2.asObservable();
+    this.obsMap = this.subj2.asObservable();
+
+    //1 simple example basic
     this.obsAccum = this.obsAccum.skip(2).scan((acc, value) => {
       return acc + value;
     });
-    this.obsArr = this.obsArr.scan((acc, value) => [value, ...acc], []);
-    this.obs.subscribe(r => {
+    this.obsArr = this.obsArr
+      .filter(d => d < 3)
+      .scan((acc, value) => [value, ...acc], []);
+    this.obsMap = this.obsMap
+      .map(a => "a" + a)
+      .scan((acc, value) => [value, ...acc], []);
+     this.obs.subscribe(r => {
       this.arr.push(r);
     });
+
+  //2 complex example https://ng-bootstrap.github.io/#/components/typeahead/examples
+
     this.subj.next(1);
     this.subj2.next(1);
     this.subj2.next(2);
